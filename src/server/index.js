@@ -2,7 +2,7 @@ const express = require("express");
 const fs = require("fs");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 function waitAndRespond(waitDuration = 5000) {
   return new Promise((resolve, reject) => {
@@ -18,6 +18,15 @@ function updateResponseTime(str, data) {
   str = str.replace("{jsWait}", data.jsWait);
 
   return str;
+}
+
+function cookieParse(cookie) {
+  const values = cookie.split(";").reduce((res, item) => {
+    const data = item.trim().split("=");
+    return { ...res, [data[0]]: data[1] };
+  }, {});
+
+  return values;
 }
 
 app.get("/", (req, res) => {
@@ -39,15 +48,6 @@ app.get("/", (req, res) => {
 
   // console.log("end");
 });
-
-function cookieParse(cookie) {
-  const values = cookie.split(";").reduce((res, item) => {
-    const data = item.trim().split("=");
-    return { ...res, [data[0]]: data[1] };
-  }, {});
-
-  return values;
-}
 
 app.get("/*.css", (req, res) => {
   console.log();
