@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index HTML file</title>
+  </head>
+  <body>
+    <article>
+      <strong>Order of loading files with waiting duration</strong>
+      <ul>
+        <li>HTML wait : {htmlWait}</li>
+        <li>CSS wait : {cssWait}</li>
+        <li>JS wait : {jsWait}</li>
+      </ul>
+      <p>
+        <strong>htmlWait</strong>=2000&<strong>cssWait</strong>=4000&<strong
+          ><strong>jsWait</strong>=6000&jsLoadingAttr</strong
+        >=defer
+      </p>
+    </article>
+
+    <h1 style="color: green">Just loaded part of HTML</h1>
+    <hr />
+
+    <link rel="stylesheet" href="./style.css" />
+    <h2>After Loading CSS</h2>
+    <hr />
+
+    <script src="./main.js"></script>
+    <h2>After Loading JS</h2>
+    <hr />
+
+    <main>
+      <h3>Notes:</h3>
+      <ol>
+        <li>
+          CSS is considered a "render blocking resource". This means that the
+          Render Tree cannot be constructed without first fully parsing the
+          resource.
+        </li>
+        <li>
+          CSS can also be "script blocking". This is because JavaScript files
+          must wait until the CSSOM has been constructed before it can run.
+        </li>
+        <li>
+          JavaScript is considered a "parser blocking resource". This means that
+          the <strong>parsing of the HTML</strong> document itself is blocked by
+          JavaScript.
+        </li>
+        <li>
+          To avoid JavaScript being parser blocking, it can be loaded
+          asynchronously be applying the async attribute.
+        </li>
+      </ol>
+
+      <div>
+        <h4>Performance Numbers</h4>
+        <p>Load Time : <span id="loadTime"></span>ms</p>
+      </div>
+      <p>End of page</p>
+
+      <h4></h4>
+    </main>
+  </body>
+</html>

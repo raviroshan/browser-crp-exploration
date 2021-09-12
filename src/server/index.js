@@ -12,10 +12,17 @@ function waitAndRespond(waitDuration = 5000) {
   });
 }
 
-function updateResponseTime(str, data) {
-  str = str.replace("{htmlWait}", data.htmlWait);
-  str = str.replace("{cssWait}", data.cssWait);
-  str = str.replace("{jsWait}", data.jsWait);
+function updateHtmlStr(str, option) {
+  // Update Wait Time
+  str = str.replace("{htmlWait}", option.htmlWait);
+  str = str.replace("{cssWait}", option.cssWait);
+  str = str.replace("{jsWait}", option.jsWait);
+
+  // Update JavaScript Load Attribute
+  str = str.replace(
+    'src="./main.js"',
+    `src="./main.js" ${option.jsLoadingAttr}`
+  );
 
   return str;
 }
@@ -29,34 +36,46 @@ function cookieParse(cookie) {
   return values;
 }
 
-app.get("/", (req, res) => {
-  const { htmlWait = 0, cssWait = 0, jsWait = 0 } = req.query;
+app.get(["/", "/*.html"], (req, res) => {
+  console.log("loading : ", req.path);
 
-  const derievedQueryObj = { htmlWait, cssWait, jsWait };
+  const {
+    htmlWait = 0,
+    cssWait = 0,
+    jsWait = 0,
+    jsLoadingAttr = "",
+  } = req.query;
+
+  const derievedQueryObj = { htmlWait, cssWait, jsWait, jsLoadingAttr };
 
   res.cookie("htmlWait", htmlWait);
   res.cookie("cssWait", cssWait);
   res.cookie("jsWait", jsWait);
 
+  let htmlPath = req.path;
+
+  if (req.path === "/") {
+    htmlPath = "/index.html";
+  }
+
   fs.readFile(
-    "src/server/static-files/index.html",
+    `src/server/static-files${htmlPath}`,
     "utf8",
     async function (err, data) {
       if (err) throw err;
-      const updatedData = updateResponseTime(data, derievedQueryObj);
+      const updatedData = updateHtmlStr(data, {
+        ...derievedQueryObj,
+        jsLoadingAttr,
+      });
       await waitAndRespond(htmlWait);
-
       res.send(updatedData);
     }
   );
-
-  // console.log("end");
 });
 
 app.get("/*.css", (req, res) => {
-  console.log();
+  console.log("loading : ", req.path);
   const cookieValues = cookieParse(req.headers.cookie);
-  console.log(">>>> 🔥   cookieValues", cookieValues.cssWait);
 
   fs.readFile(
     `src/server/static-files${req.path}`,
@@ -71,8 +90,8 @@ app.get("/*.css", (req, res) => {
 });
 
 app.get("/*.js", (req, res) => {
+  console.log("loading : ", req.path);
   const cookieValues = cookieParse(req.headers.cookie);
-  console.log(">>>> 🔥   cookieValues", cookieValues.jsWait);
 
   fs.readFile(
     `src/server/static-files${req.path}`,
@@ -80,7 +99,6 @@ app.get("/*.js", (req, res) => {
     async function (err, data) {
       if (err) throw err;
       await waitAndRespond(cookieValues.jsWait);
-      // res.type("css");
       res.send(data);
     }
   );
