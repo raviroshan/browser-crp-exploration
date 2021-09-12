@@ -19,3 +19,24 @@ window.onload = function () {
 
   document.getElementById("loadTime").textContent = loadTime;
 };
+
+const beforeLoadingJSHeading = document.getElementById(
+  "beforeLoadingJSHeading"
+);
+if (beforeLoadingJSHeading) {
+  // This is available in DOM (already parsed), but not renderd due to CSS loading
+
+  beforeLoadingJSHeading.innerText =
+    beforeLoadingJSHeading.innerText + " : updated ✅";
+} else {
+  console.log("beforeLoadingJSHeading not updated ❌");
+}
+
+const afterLoadingJSHeading = document.getElementById("afterLoadingJSHeading");
+if (afterLoadingJSHeading) {
+  // This is NOT found in DOM yet
+  afterLoadingJSHeading.innerText =
+    afterLoadingJSHeading.innerText + " : updated ✅";
+} else {
+  console.log("afterLoadingJSHeading not updated ❌");
+}
