@@ -38,13 +38,17 @@ app.get("/", (req, res) => {
   res.cookie("cssWait", cssWait);
   res.cookie("jsWait", jsWait);
 
-  fs.readFile("src/server/dist/index.html", "utf8", async function (err, data) {
-    if (err) throw err;
-    const updatedData = updateResponseTime(data, derievedQueryObj);
-    await waitAndRespond(htmlWait);
+  fs.readFile(
+    "src/server/static-files/index.html",
+    "utf8",
+    async function (err, data) {
+      if (err) throw err;
+      const updatedData = updateResponseTime(data, derievedQueryObj);
+      await waitAndRespond(htmlWait);
 
-    res.send(updatedData);
-  });
+      res.send(updatedData);
+    }
+  );
 
   // console.log("end");
 });
@@ -54,24 +58,32 @@ app.get("/*.css", (req, res) => {
   const cookieValues = cookieParse(req.headers.cookie);
   console.log(">>>> 🔥   cookieValues", cookieValues.cssWait);
 
-  fs.readFile(`src/server/dist${req.path}`, "utf8", async function (err, data) {
-    if (err) throw err;
-    await waitAndRespond(cookieValues.cssWait);
-    res.type("css");
-    res.send(data);
-  });
+  fs.readFile(
+    `src/server/static-files${req.path}`,
+    "utf8",
+    async function (err, data) {
+      if (err) throw err;
+      await waitAndRespond(cookieValues.cssWait);
+      res.type("css");
+      res.send(data);
+    }
+  );
 });
 
 app.get("/*.js", (req, res) => {
   const cookieValues = cookieParse(req.headers.cookie);
   console.log(">>>> 🔥   cookieValues", cookieValues.jsWait);
 
-  fs.readFile(`src/server/dist${req.path}`, "utf8", async function (err, data) {
-    if (err) throw err;
-    await waitAndRespond(cookieValues.jsWait);
-    // res.type("css");
-    res.send(data);
-  });
+  fs.readFile(
+    `src/server/static-files${req.path}`,
+    "utf8",
+    async function (err, data) {
+      if (err) throw err;
+      await waitAndRespond(cookieValues.jsWait);
+      // res.type("css");
+      res.send(data);
+    }
+  );
 });
 
 app.listen(port, () => {
