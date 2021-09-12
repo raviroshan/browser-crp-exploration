@@ -1,0 +1,18 @@
+{
+  "name": "browser-crp",
+  "version": "1.0.0",
+  "description": "Exploring browser CRP",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./src/server"
+  },
+  "keywords": [
+    "CRP"
+  ],
+  "author": "Ravi Roshan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.12"
+  }
+}
